@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: hirehub_user
+      POSTGRES_PASSWORD: hirehub_password
+      POSTGRES_DB: hirehub_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=hirehub_user
+      - DB_PASSWORD=hirehub_password
+      - DB_DATABASE=hirehub_db
+      - JWT_SECRET=super_secret_jwt_key_hardcoded
+volumes:
+  db-data:
